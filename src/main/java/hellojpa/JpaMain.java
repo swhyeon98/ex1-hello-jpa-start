@@ -5,8 +5,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
-import java.util.List;
-
 public class JpaMain {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
@@ -17,13 +15,16 @@ public class JpaMain {
         tx.begin();
 
         try {
-//            Member findMember = em.find(Member.class, 1L);
-            List<Member> result = em.createQuery("select m from Member as m ", Member.class)
-                    .getResultList();
+            // 비영속
+            Member member = new Member();
+            member.setId(100L);
+            member.setName("HelloJPA");
 
-            for (Member member : result) {
-                System.out.println("member = " + member.getName());
-            }
+            // 영속
+            System.out.println("=== BEFORE ===");
+            em.persist(member);
+            em.detach(member);
+            System.out.println("=== AFTER ===");
 
             tx.commit();
         } catch (Exception e) {
